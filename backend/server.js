@@ -6,7 +6,7 @@ dotenv.config();
 
 const connectDB = require("./config/db");
 
-const providerRoutes = require("./routes/providerRoutes");
+const providerRoutes = require("./routes/ProviderRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const recommendationRoutes = require("./routes/recommendationRoutes");
 
