@@ -1,7 +1,7 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-
+const authRoutes = require("./routes/authRoutes");
 dotenv.config();
 
 const connectDB = require("./config/db");
@@ -22,7 +22,7 @@ app.use(express.json());
 app.use("/api/providers", providerRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/recommendation", recommendationRoutes);
-
+app.use("/api/auth", authRoutes);
 // Test Route
 app.get("/", (req, res) => {
   res.send("Twin Cities Backend is Running...");

@@ -166,48 +166,6 @@ font-weight:600;
 }
 
 /* ===========================
-Favourite Button
-=========================== */
-
-.fav-btn{
-
-width:60px;
-
-height:60px;
-
-border:none;
-
-border-radius:50%;
-
-background:#fee2e2;
-
-color:#ef4444;
-
-cursor:pointer;
-
-display:flex;
-
-justify-content:center;
-
-align-items:center;
-
-font-size:22px;
-
-transition:.3s;
-
-}
-
-.fav-btn:hover{
-
-transform:scale(1.08);
-
-background:#ef4444;
-
-color:white;
-
-}
-
-/* ===========================
 Info Grid
 =========================== */
 
@@ -468,22 +426,6 @@ color:white;
 background:#1d4ed8;
 
 transform:translateY(-4px);
-
-}
-
-/* Share */
-
-.share-btn{
-
-background:#f8fafc;
-
-border:1px solid #cbd5e1;
-
-}
-
-.share-btn:hover{
-
-background:#e2e8f0;
 
 }
 
@@ -943,4 +885,22 @@ transform:translateY(0);
 
 }
 
+}
+.map-btn {
+  background: #4285f4;
+  color: white;
+  text-decoration: none;
+  padding: 14px 20px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  transition: 0.3s;
+}
+
+.map-btn:hover {
+  background: #3367d6;
+  transform: translateY(-3px);
 }

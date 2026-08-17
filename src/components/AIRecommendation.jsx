@@ -11,8 +11,6 @@ import {
   FaCheckCircle,
   FaRobot,
   FaPhone,
-  FaHeart,
-  FaShareAlt,
   FaBolt,
   FaAward,
 } from "react-icons/fa";
@@ -193,23 +191,6 @@ function AIRecommendation() {
               <FaPhone />
               Call
             </a>
-
-            <button
-              className="fav-btn"
-              onClick={() => alert("Favourite feature coming soon")}
-            >
-              <FaHeart />
-            </button>
-
-            <button
-              className="share-btn"
-              onClick={() => {
-                navigator.clipboard.writeText(window.location.href);
-                alert("Link copied successfully.");
-              }}
-            >
-              <FaShareAlt />
-            </button>
 
           </div>
 

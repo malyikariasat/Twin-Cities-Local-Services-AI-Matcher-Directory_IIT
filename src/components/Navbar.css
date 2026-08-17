@@ -119,3 +119,24 @@ font-size:28px;
 }
 
 }
+.welcome-user {
+  color: #344054;
+  font-weight: 600;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.logout-btn {
+  border: none;
+  background: transparent;
+  color: #dc2626;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 8px 10px;
+  font-family: inherit;
+}
+
+.logout-btn:hover {
+  color: #b91c1c;
+}

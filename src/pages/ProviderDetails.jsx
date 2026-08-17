@@ -4,9 +4,8 @@ import {
   FaWhatsapp,
   FaArrowLeft,
   FaPhoneAlt,
-  FaShareAlt,
-  FaHeart,
   FaMapMarkerAlt,
+  FaMapMarkedAlt,
   FaMoneyBillWave,
   FaBolt,
   FaCheckCircle,
@@ -160,6 +159,27 @@ Back
 );
 
 }
+const getEstimatedDistance = (area) => {
+  const distances = {
+    "G-6 Islamabad": "5.2 km",
+    "G-7 Islamabad": "4.6 km",
+    "G-8 Islamabad": "3.8 km",
+    "G-9 Islamabad": "3.2 km",
+    "G-10 Islamabad": "2.7 km",
+    "G-11 Islamabad": "2.1 km",
+    "F-6 Islamabad": "6.4 km",
+    "F-7 Islamabad": "5.8 km",
+    "F-10 Islamabad": "2.9 km",
+    "I-8 Islamabad": "4.3 km",
+    "Bahria Town": "12.5 km",
+    "DHA Phase 2": "14.2 km",
+    "Gulberg Greens": "10.8 km",
+    "Saddar Rawalpindi": "11.4 km",
+    "Chaklala Scheme 3": "13.1 km",
+  };
+
+  return distances[area] || "Nearby";
+};
 const message=`Hello ${provider.name},
 
 I found your profile on Twin Cities Local Services.
@@ -222,13 +242,6 @@ Verified Provider
 )}
 
 </div>
-
-<button className="fav-btn">
-
-<FaHeart/>
-
-</button>
-
 </div>
 {/* Information Grid */}
 
@@ -266,6 +279,13 @@ Verified Provider
     </div>
   </div>
 
+</div>
+<div className="info-box">
+  📍
+  <div>
+    <h4>Distance</h4>
+    <p>{getEstimatedDistance(provider.area)} away</p>
+  </div>
 </div>
 
 {/* Provider Meta */}
@@ -368,26 +388,17 @@ className="call-btn"
 Call
 
 </a>
-
-<button
-
-className="share-btn"
-
-onClick={()=>{
-
-navigator.clipboard.writeText(window.location.href);
-
-alert("Profile link copied.");
-
-}}
-
+<a
+  href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    provider.area
+  )}`}
+  target="_blank"
+  rel="noreferrer"
+  className="map-btn"
 >
-
-<FaShareAlt />
-
-Share
-
-</button>
+  <FaMapMarkedAlt />
+  Open in Google Maps
+</a>
 
 <Link
 
@@ -514,8 +525,6 @@ key={item._id}
 {item.name}
 
 </h3>
-
-<FaHeart/>
 
 </div>
 

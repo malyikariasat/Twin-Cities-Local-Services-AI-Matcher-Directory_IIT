@@ -1,26 +1,27 @@
+import { Link } from "react-router-dom";
 import "./EmergencyBanner.css";
 
 function EmergencyBanner() {
   return (
     <section className="emergency">
-
       <div className="emergency-content">
 
         <div>
-
           <h2>🚨 Need Help Urgently?</h2>
 
           <p>
-            Find available plumbers and electricians for emergency
-            situations in your area.
+            Find verified plumbers, electricians, AC technicians and other
+            emergency service providers available near your area.
           </p>
-
         </div>
 
-        <button>Emergency Services</button>
+        <Link to="/emergency">
+          <button className="emergency-btn">
+            Emergency Services
+          </button>
+        </Link>
 
       </div>
-
     </section>
   );
 }

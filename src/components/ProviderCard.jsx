@@ -60,7 +60,7 @@ Thank you.`;
           </button>
         </a>
 
-        <Link to={`/provider/${provider._id}`}>
+        <Link to={`/providers/${provider._id}`}>
           <button className="details-btn">
             View Details
           </button>

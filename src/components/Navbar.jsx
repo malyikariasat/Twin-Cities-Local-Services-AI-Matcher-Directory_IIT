@@ -1,7 +1,19 @@
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "./Navbar.css";
 
 function Navbar() {
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    navigate("/");
+  };
+
   return (
     <header className="navbar">
 
@@ -21,7 +33,31 @@ function Navbar() {
           Providers
         </NavLink>
 
-      
+        {!token ? (
+          <>
+            <NavLink to="/login">
+              Sign In
+            </NavLink>
+
+            <NavLink to="/register">
+              Create Account
+            </NavLink>
+          </>
+        ) : (
+          <>
+            <span className="welcome-user">
+              👤 {user?.name}
+            </span>
+
+            <button
+              className="logout-btn"
+              onClick={handleLogout}
+            >
+              Logout
+            </button>
+          </>
+        )}
+
       </nav>
 
     </header>
