@@ -33,45 +33,40 @@ const userSchema = new mongoose.Schema(
       default: "user",
     },
 
-    // Provider information
+    // Provider-specific fields
     category: {
       type: String,
-      trim: true,
-    },
-
-    whatsapp: {
-      type: String,
-      trim: true,
+      default: "",
     },
 
     area: {
       type: String,
-      trim: true,
+      default: "",
     },
 
-    price: {
+    whatsapp: {
       type: String,
-      trim: true,
+      default: "",
     },
 
     experience: {
       type: String,
-      trim: true,
+      default: "1 Year",
+    },
+
+    price: {
+      type: Number,
+      default: 0,
     },
 
     availability: {
       type: String,
-      trim: true,
+      default: "Available Today",
     },
 
     description: {
       type: String,
-      trim: true,
-    },
-
-    verified: {
-      type: Boolean,
-      default: false,
+      default: "",
     },
   },
   {

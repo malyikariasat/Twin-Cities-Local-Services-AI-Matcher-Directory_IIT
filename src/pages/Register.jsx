@@ -6,20 +6,20 @@ import "./Auth.css";
 function Register() {
   const navigate = useNavigate();
 
+  const [accountType, setAccountType] = useState("user");
+
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     password: "",
 
-    role: "user",
-
     category: "",
-    whatsapp: "",
     area: "",
-    price: "",
+    whatsapp: "",
     experience: "",
-    availability: "",
+    price: "",
+    availability: "Available Today",
     description: "",
   });
 
@@ -33,24 +33,47 @@ function Register() {
     });
   };
 
+  const handleAccountTypeChange = (type) => {
+    setAccountType(type);
+    setError("");
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     setError("");
 
+    if (
+      accountType === "provider" &&
+      (!formData.category ||
+        !formData.area ||
+        !formData.price ||
+        !formData.description)
+    ) {
+      setError(
+        "Please fill in all required provider information."
+      );
+      return;
+    }
+
     try {
       setLoading(true);
 
-      await axios.post(
+      const response = await axios.post(
         "http://localhost:5000/api/auth/register",
-        formData
+        {
+          ...formData,
+          role: accountType,
+        }
       );
 
       alert(
-        formData.role === "provider"
+        accountType === "provider"
           ? "Provider account created successfully! 🎉"
           : "Account created successfully! 🎉"
       );
+
+      console.log(response.data);
 
       navigate("/login");
     } catch (error) {
@@ -75,8 +98,46 @@ function Register() {
           <h1>Create Account</h1>
 
           <p>
-            Join Twin Cities AI and connect with trusted local services.
+            Join Twin Cities AI and find trusted local
+            services easily.
           </p>
+        </div>
+
+        {/* Account Type */}
+        <div className="account-type">
+          <label>Account Type</label>
+
+          <div className="account-type-buttons">
+
+            <button
+              type="button"
+              className={
+                accountType === "user"
+                  ? "type-btn active"
+                  : "type-btn"
+              }
+              onClick={() =>
+                handleAccountTypeChange("user")
+              }
+            >
+              👤 User
+            </button>
+
+            <button
+              type="button"
+              className={
+                accountType === "provider"
+                  ? "type-btn active"
+                  : "type-btn"
+              }
+              onClick={() =>
+                handleAccountTypeChange("provider")
+              }
+            >
+              🛠️ Service Provider
+            </button>
+
+          </div>
         </div>
 
         {error && (
@@ -86,26 +147,6 @@ function Register() {
         )}
 
         <form onSubmit={handleSubmit}>
-
-          {/* Account Type */}
-          <div className="form-group">
-            <label>Account Type</label>
-
-            <select
-              name="role"
-              value={formData.role}
-              onChange={handleChange}
-              required
-            >
-              <option value="user">
-                Customer
-              </option>
-
-              <option value="provider">
-                Service Provider
-              </option>
-            </select>
-          </div>
 
           {/* Basic Information */}
 
@@ -164,16 +205,10 @@ function Register() {
 
           {/* Provider Information */}
 
-          {formData.role === "provider" && (
-            <>
-              <div className="provider-section">
-                <h3>Service Provider Information</h3>
+          {accountType === "provider" && (
+            <div className="provider-registration">
 
-                <p>
-                  Add your service details so customers can find and
-                  contact you.
-                </p>
-              </div>
+              <h3>🛠️ Provider Information</h3>
 
               <div className="form-group">
                 <label>Service Category</label>
@@ -185,7 +220,7 @@ function Register() {
                   required
                 >
                   <option value="">
-                    Select a category
+                    Select Service
                   </option>
 
                   <option value="Plumber">
@@ -215,20 +250,7 @@ function Register() {
               </div>
 
               <div className="form-group">
-                <label>WhatsApp Number</label>
-
-                <input
-                  type="tel"
-                  name="whatsapp"
-                  placeholder="03XXXXXXXXX"
-                  value={formData.whatsapp}
-                  onChange={handleChange}
-                  required
-                />
-              </div>
-
-              <div className="form-group">
-                <label>Area / Sector</label>
+                <label>Area / Location</label>
 
                 <input
                   type="text"
@@ -241,15 +263,14 @@ function Register() {
               </div>
 
               <div className="form-group">
-                <label>Starting Price</label>
+                <label>WhatsApp Number</label>
 
                 <input
-                  type="text"
-                  name="price"
-                  placeholder="e.g. Rs. 2000"
-                  value={formData.price}
+                  type="tel"
+                  name="whatsapp"
+                  placeholder="03XXXXXXXXX"
+                  value={formData.whatsapp}
                   onChange={handleChange}
-                  required
                 />
               </div>
 
@@ -259,9 +280,22 @@ function Register() {
                 <input
                   type="text"
                   name="experience"
-                  placeholder="e.g. 5 years"
+                  placeholder="e.g. 5 Years"
                   value={formData.experience}
                   onChange={handleChange}
+                />
+              </div>
+
+              <div className="form-group">
+                <label>Starting Price (PKR)</label>
+
+                <input
+                  type="number"
+                  name="price"
+                  placeholder="e.g. 2000"
+                  value={formData.price}
+                  onChange={handleChange}
+                  min="0"
                   required
                 />
               </div>
@@ -273,26 +307,21 @@ function Register() {
                   name="availability"
                   value={formData.availability}
                   onChange={handleChange}
-                  required
                 >
-                  <option value="">
-                    Select availability
-                  </option>
-
                   <option value="Available Today">
                     Available Today
                   </option>
 
-                  <option value="Available Now">
-                    Available Now
-                  </option>
-
-                  <option value="Available on Weekdays">
-                    Available on Weekdays
+                  <option value="Available Tomorrow">
+                    Available Tomorrow
                   </option>
 
                   <option value="Available on Weekends">
                     Available on Weekends
+                  </option>
+
+                  <option value="Not Available">
+                    Not Available
                   </option>
                 </select>
               </div>
@@ -302,14 +331,15 @@ function Register() {
 
                 <textarea
                   name="description"
-                  placeholder="Describe your services and experience..."
+                  placeholder="Describe your services..."
                   value={formData.description}
                   onChange={handleChange}
                   rows="4"
                   required
                 />
               </div>
-            </>
+
+            </div>
           )}
 
           <button
@@ -319,7 +349,7 @@ function Register() {
           >
             {loading
               ? "Creating Account..."
-              : formData.role === "provider"
+              : accountType === "provider"
               ? "Create Provider Account"
               : "Create Account"}
           </button>

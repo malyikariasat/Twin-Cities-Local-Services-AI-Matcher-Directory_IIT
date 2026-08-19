@@ -1,6 +1,8 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+
 const User = require("../models/User");
+const Provider = require("../models/Provider");
 
 // Register User / Provider
 const registerUser = async (req, res) => {
@@ -12,42 +14,23 @@ const registerUser = async (req, res) => {
       password,
       role,
       category,
-      whatsapp,
       area,
-      price,
+      whatsapp,
       experience,
+      price,
       availability,
       description,
     } = req.body;
 
-    // Common required fields
+    // Check required fields
     if (!name || !email || !phone || !password) {
       return res.status(400).json({
         success: false,
-        message: "Please provide name, email, phone and password.",
+        message:
+          "Please provide name, email, phone and password.",
       });
     }
 
-    // Provider-specific required fields
-    if (role === "provider") {
-      if (
-        !category ||
-        !whatsapp ||
-        !area ||
-        !price ||
-        !experience ||
-        !availability ||
-        !description
-      ) {
-        return res.status(400).json({
-          success: false,
-          message:
-            "Please provide all required provider information.",
-        });
-      }
-    }
-
-    // Check existing account
     const existingUser = await User.findOne({
       email: email.toLowerCase(),
     });
@@ -55,44 +38,109 @@ const registerUser = async (req, res) => {
     if (existingUser) {
       return res.status(400).json({
         success: false,
-        message: "An account with this email already exists.",
+        message:
+          "An account with this email already exists.",
       });
     }
 
-    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create account
+    const userRole = role === "provider" ? "provider" : "user";
+
+    // Create User account
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       phone,
       password: hashedPassword,
+      role: userRole,
 
-      role: role === "provider" ? "provider" : "user",
+      category:
+        userRole === "provider"
+          ? category
+          : "",
 
-      // Provider information
-      category: role === "provider" ? category : undefined,
-      whatsapp: role === "provider" ? whatsapp : undefined,
-      area: role === "provider" ? area : undefined,
-      price: role === "provider" ? price : undefined,
-      experience: role === "provider" ? experience : undefined,
+      area:
+        userRole === "provider"
+          ? area
+          : "",
+
+      whatsapp:
+        userRole === "provider"
+          ? whatsapp || phone
+          : "",
+
+      experience:
+        userRole === "provider"
+          ? experience || "1 Year"
+          : "1 Year",
+
+      price:
+        userRole === "provider"
+          ? Number(price) || 0
+          : 0,
+
       availability:
-        role === "provider" ? availability : undefined,
-      description:
-        role === "provider" ? description : undefined,
+        userRole === "provider"
+          ? availability || "Available Today"
+          : "Available Today",
 
-      // New providers are not automatically verified
-      verified: false,
+      description:
+        userRole === "provider"
+          ? description || ""
+          : "",
     });
+
+    // -----------------------------------------
+    // CREATE PROVIDER RECORD
+    // -----------------------------------------
+
+    if (userRole === "provider") {
+      const provider = await Provider.create({
+        name: user.name,
+        category: category,
+        area: area,
+        phone: user.phone,
+        whatsapp: whatsapp || user.phone,
+        experience: experience || "1 Year",
+        rating: 0,
+        reviews: 0,
+        price: Number(price) || 0,
+        availability:
+          availability || "Available Today",
+        verified: false,
+        responseTime: "30 mins",
+        description:
+          description ||
+          "Service provider registered on Twin Cities AI.",
+      });
+
+      return res.status(201).json({
+        success: true,
+        message: "Provider account created successfully.",
+        user: {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+          phone: user.phone,
+          role: user.role,
+        },
+        provider: {
+          id: provider._id,
+          name: provider.name,
+          category: provider.category,
+          area: provider.area,
+        },
+      });
+    }
+
+    // -----------------------------------------
+    // NORMAL USER RESPONSE
+    // -----------------------------------------
 
     res.status(201).json({
       success: true,
-      message:
-        role === "provider"
-          ? "Provider account created successfully."
-          : "Account created successfully.",
-
+      message: "Account created successfully.",
       user: {
         id: user._id,
         name: user.name,
@@ -111,7 +159,8 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Login User / Provider
+
+// Login User
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -149,7 +198,6 @@ const loginUser = async (req, res) => {
     const token = jwt.sign(
       {
         userId: user._id,
-        role: user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -161,7 +209,6 @@ const loginUser = async (req, res) => {
       success: true,
       message: "Login successful.",
       token,
-
       user: {
         id: user._id,
         name: user.name,
@@ -180,7 +227,8 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Get Logged-in User / Provider
+
+// Get Logged-in User
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.userId).select(
@@ -196,23 +244,12 @@ const getMe = async (req, res) => {
 
     res.status(200).json({
       success: true,
-
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
         role: user.role,
-
-        // Provider information
-        category: user.category,
-        whatsapp: user.whatsapp,
-        area: user.area,
-        price: user.price,
-        experience: user.experience,
-        availability: user.availability,
-        description: user.description,
-        verified: user.verified,
       },
     });
   } catch (error) {
@@ -224,6 +261,7 @@ const getMe = async (req, res) => {
     });
   }
 };
+
 
 module.exports = {
   registerUser,
