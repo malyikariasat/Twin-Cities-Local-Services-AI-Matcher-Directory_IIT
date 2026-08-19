@@ -5,7 +5,7 @@ const router = express.Router();
 const {
   getProviders,
   getProviderById,
-} = require("../controllers/ProviderController");
+} = require("../controllers/providerController");
 
 router.get("/", getProviders);
 
