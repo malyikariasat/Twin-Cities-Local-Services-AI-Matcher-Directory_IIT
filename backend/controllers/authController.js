@@ -2,11 +2,25 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 
-// Register User
+// Register User / Provider
 const registerUser = async (req, res) => {
   try {
-    const { name, email, phone, password } = req.body;
+    const {
+      name,
+      email,
+      phone,
+      password,
+      role,
+      category,
+      whatsapp,
+      area,
+      price,
+      experience,
+      availability,
+      description,
+    } = req.body;
 
+    // Common required fields
     if (!name || !email || !phone || !password) {
       return res.status(400).json({
         success: false,
@@ -14,6 +28,26 @@ const registerUser = async (req, res) => {
       });
     }
 
+    // Provider-specific required fields
+    if (role === "provider") {
+      if (
+        !category ||
+        !whatsapp ||
+        !area ||
+        !price ||
+        !experience ||
+        !availability ||
+        !description
+      ) {
+        return res.status(400).json({
+          success: false,
+          message:
+            "Please provide all required provider information.",
+        });
+      }
+    }
+
+    // Check existing account
     const existingUser = await User.findOne({
       email: email.toLowerCase(),
     });
@@ -25,23 +59,46 @@ const registerUser = async (req, res) => {
       });
     }
 
+    // Hash password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Create account
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       phone,
       password: hashedPassword,
+
+      role: role === "provider" ? "provider" : "user",
+
+      // Provider information
+      category: role === "provider" ? category : undefined,
+      whatsapp: role === "provider" ? whatsapp : undefined,
+      area: role === "provider" ? area : undefined,
+      price: role === "provider" ? price : undefined,
+      experience: role === "provider" ? experience : undefined,
+      availability:
+        role === "provider" ? availability : undefined,
+      description:
+        role === "provider" ? description : undefined,
+
+      // New providers are not automatically verified
+      verified: false,
     });
 
     res.status(201).json({
       success: true,
-      message: "Account created successfully.",
+      message:
+        role === "provider"
+          ? "Provider account created successfully."
+          : "Account created successfully.",
+
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -54,12 +111,11 @@ const registerUser = async (req, res) => {
   }
 };
 
-// Login User
+// Login User / Provider
 const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body;
 
-    // Check fields
     if (!email || !password) {
       return res.status(400).json({
         success: false,
@@ -67,7 +123,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Find user
     const user = await User.findOne({
       email: email.toLowerCase(),
     });
@@ -79,7 +134,6 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Compare password
     const isPasswordCorrect = await bcrypt.compare(
       password,
       user.password
@@ -92,10 +146,10 @@ const loginUser = async (req, res) => {
       });
     }
 
-    // Generate JWT
     const token = jwt.sign(
       {
         userId: user._id,
+        role: user.role,
       },
       process.env.JWT_SECRET,
       {
@@ -107,11 +161,13 @@ const loginUser = async (req, res) => {
       success: true,
       message: "Login successful.",
       token,
+
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       },
     });
   } catch (error) {
@@ -124,10 +180,12 @@ const loginUser = async (req, res) => {
   }
 };
 
-// Get Logged-in User
+// Get Logged-in User / Provider
 const getMe = async (req, res) => {
   try {
-    const user = await User.findById(req.userId).select("-password");
+    const user = await User.findById(req.userId).select(
+      "-password"
+    );
 
     if (!user) {
       return res.status(404).json({
@@ -138,11 +196,23 @@ const getMe = async (req, res) => {
 
     res.status(200).json({
       success: true,
+
       user: {
         id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
+        role: user.role,
+
+        // Provider information
+        category: user.category,
+        whatsapp: user.whatsapp,
+        area: user.area,
+        price: user.price,
+        experience: user.experience,
+        availability: user.availability,
+        description: user.description,
+        verified: user.verified,
       },
     });
   } catch (error) {

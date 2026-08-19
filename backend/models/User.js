@@ -26,6 +26,53 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+
+    role: {
+      type: String,
+      enum: ["user", "provider"],
+      default: "user",
+    },
+
+    // Provider information
+    category: {
+      type: String,
+      trim: true,
+    },
+
+    whatsapp: {
+      type: String,
+      trim: true,
+    },
+
+    area: {
+      type: String,
+      trim: true,
+    },
+
+    price: {
+      type: String,
+      trim: true,
+    },
+
+    experience: {
+      type: String,
+      trim: true,
+    },
+
+    availability: {
+      type: String,
+      trim: true,
+    },
+
+    description: {
+      type: String,
+      trim: true,
+    },
+
+    verified: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,
