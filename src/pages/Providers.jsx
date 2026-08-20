@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 
 import ProviderCard from "../components/ProviderCard";
 import Filters from "../components/Filters";
+import API from "../services/api";
 import "./Providers.css";
 
 function Providers() {
@@ -23,50 +23,57 @@ function Providers() {
     try {
       setLoading(true);
 
-      let url = "http://localhost:5000/api/providers?";
+      const params = new URLSearchParams();
 
       if (search.trim()) {
-        url += `search=${encodeURIComponent(search)}&`;
+        params.set("search", search);
       }
 
       if (category !== "All") {
-        url += `category=${encodeURIComponent(category)}&`;
+        params.set("category", category);
       }
 
       if (location !== "All") {
-        url += `area=${encodeURIComponent(location)}&`;
+        params.set("area", location);
       }
 
       if (rating !== "All") {
-        url += `rating=${rating}&`;
+        params.set("rating", rating);
       }
 
-      const { data } = await axios.get(url);
+      const { data } = await API.get(`/providers?${params.toString()}`);
 
       setProviders(data);
-
     } catch (error) {
-      console.error(error);
+      console.error("Fetch Providers Error:", error);
+
+      setProviders([]);
     } finally {
       setLoading(false);
     }
   };
 
-  // Backend already filtered data
+  // Backend already filtered the data
   let filteredProviders = [...providers];
 
   // Frontend Sorting
   switch (sortBy) {
     case "rating":
-      filteredProviders.sort((a, b) => b.rating - a.rating);
+      filteredProviders.sort(
+        (a, b) => b.rating - a.rating
+      );
       break;
 
     case "lowPrice":
-      filteredProviders.sort((a, b) => a.price - b.price);
+      filteredProviders.sort(
+        (a, b) => a.price - b.price
+      );
       break;
 
     case "highPrice":
-      filteredProviders.sort((a, b) => b.price - a.price);
+      filteredProviders.sort(
+        (a, b) => b.price - a.price
+      );
       break;
 
     case "name":
@@ -81,7 +88,12 @@ function Providers() {
 
   if (loading) {
     return (
-      <h2 style={{ textAlign: "center", marginTop: "40px" }}>
+      <h2
+        style={{
+          textAlign: "center",
+          marginTop: "40px",
+        }}
+      >
         Loading Providers...
       </h2>
     );
@@ -91,12 +103,14 @@ function Providers() {
     <div className="providers-page">
 
       <div className="providers-header">
+
         <h1>Service Providers</h1>
 
         <p>
-          Find trusted and verified professionals in Islamabad &
-          Rawalpindi.
+          Find trusted and verified professionals in
+          Islamabad & Rawalpindi.
         </p>
+
       </div>
 
       <div className="providers-layout">
@@ -122,8 +136,11 @@ function Providers() {
 
             <select
               value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
+              onChange={(e) =>
+                setSortBy(e.target.value)
+              }
             >
+
               <option value="default">
                 Sort By
               </option>

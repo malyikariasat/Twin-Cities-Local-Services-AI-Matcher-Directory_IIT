@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../services/api";
 import "./Auth.css";
 
 function Register() {
@@ -59,13 +59,10 @@ function Register() {
     try {
       setLoading(true);
 
-      const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
-        {
-          ...formData,
-          role: accountType,
-        }
-      );
+      const response = await API.post("/auth/register", {
+        ...formData,
+        role: accountType,
+      });
 
       alert(
         accountType === "provider"
@@ -77,7 +74,7 @@ function Register() {
 
       navigate("/login");
     } catch (error) {
-      console.error(error);
+      console.error("Registration Error:", error);
 
       setError(
         error.response?.data?.message ||
@@ -104,6 +101,7 @@ function Register() {
         </div>
 
         {/* Account Type */}
+
         <div className="account-type">
           <label>Account Type</label>
 

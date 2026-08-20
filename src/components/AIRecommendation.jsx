@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
+import API from "../services/api";
 import "./AIRecommendation.css";
 
 import {
@@ -24,9 +24,11 @@ function AIRecommendation() {
   const calculateScore = (provider) => {
     let score = 70;
 
-    score += provider.rating * 4;
+    score += (provider.rating || 0) * 4;
 
-    if (provider.verified) score += 5;
+    if (provider.verified) {
+      score += 5;
+    }
 
     if (
       provider.availability &&
@@ -53,19 +55,23 @@ function AIRecommendation() {
 
     try {
       setLoading(true);
+      setProvider(null);
+      setReason("");
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/recommendation",
-        {
-          query,
-        }
-      );
+      // Uses API service instead of localhost
+      const { data } = await API.post("/recommendation", {
+        query,
+      });
 
       setProvider(data.provider);
       setReason(data.reason);
     } catch (error) {
-      console.error(error);
-      alert("Failed to get recommendation.");
+      console.error("AI Recommendation Error:", error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to get recommendation. Please try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -74,10 +80,13 @@ function AIRecommendation() {
   return (
     <div className="ai-container">
 
-      <h2>🤖 AI Powered Service Recommendation</h2>
+      <h2>
+        🤖 AI Powered Service Recommendation
+      </h2>
 
       <p className="subtitle">
-        Describe your problem naturally and our AI will recommend the most suitable verified service provider.
+        Describe your problem naturally and our AI will recommend
+        the most suitable verified service provider.
       </p>
 
       <input
@@ -85,6 +94,11 @@ function AIRecommendation() {
         placeholder="Example: Need an affordable electrician in G-11 under Rs.3000 today"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !loading) {
+            getRecommendation();
+          }
+        }}
       />
 
       <button
@@ -103,7 +117,6 @@ function AIRecommendation() {
       </button>
 
       {provider && (
-
         <div className="ai-card">
 
           <div className="top-badge">
@@ -119,7 +132,6 @@ function AIRecommendation() {
           <div className="card-header">
 
             <div>
-
               <h3>{provider.name}</h3>
 
               {provider.verified && (
@@ -128,7 +140,6 @@ function AIRecommendation() {
                   Verified
                 </span>
               )}
-
             </div>
 
           </div>
@@ -137,7 +148,7 @@ function AIRecommendation() {
 
             <span>
               <FaStar />
-              {provider.rating}
+              {provider.rating || 0}
             </span>
 
             <span>
@@ -152,13 +163,14 @@ function AIRecommendation() {
 
             <span>
               <FaBolt />
-              {provider.responseTime}
+              {provider.responseTime || "30 mins"}
             </span>
 
           </div>
 
           <p>
-            <strong>Category:</strong> {provider.category}
+            <strong>Category:</strong>{" "}
+            {provider.category}
           </p>
 
           <div className="reason-box">
@@ -168,7 +180,9 @@ function AIRecommendation() {
               Why AI Recommended?
             </h4>
 
-            <p>{reason}</p>
+            <p>
+              {reason}
+            </p>
 
           </div>
 
@@ -195,14 +209,13 @@ function AIRecommendation() {
           </div>
 
           <Link
-  to={`/providers/${provider._id || provider.id}`}
-  className="details-link"
->
-  View Full Profile →
-</Link>
+            to={`/providers/${provider._id || provider.id}`}
+            className="details-link"
+          >
+            View Full Profile →
+          </Link>
 
         </div>
-
       )}
 
     </div>
