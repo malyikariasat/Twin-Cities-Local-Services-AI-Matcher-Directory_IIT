@@ -1,84 +1,329 @@
-.providers-page{
-    padding:60px 8%;
-    background:#f5f8fc;
-    min-height:100vh;
+/* =========================================
+   PROVIDERS PAGE
+========================================= */
+
+.providers-page {
+  padding: 60px 8%;
+  background: #f5f8fc;
+  min-height: 100vh;
+  box-sizing: border-box;
 }
 
-.providers-header{
-    text-align:center;
-    margin-bottom:40px;
+/* =========================================
+   HEADER
+========================================= */
+
+.providers-header {
+  text-align: center;
+  margin-bottom: 40px;
 }
 
-.providers-header h1{
-    font-size:42px;
-    color:#0f172a;
+.providers-header h1 {
+  font-size: 42px;
+  color: #0f172a;
+  margin: 0;
 }
 
-.providers-header p{
-    color:#64748b;
-    margin-top:12px;
-    font-size:18px;
+.providers-header p {
+  color: #64748b;
+  margin-top: 12px;
+  font-size: 18px;
+  line-height: 1.5;
 }
 
-.providers-layout{
-    display:grid;
-    grid-template-columns:280px 1fr;
-    gap:35px;
-    align-items:start;
+/* =========================================
+   MAIN PROVIDERS LAYOUT
+========================================= */
+
+.providers-layout {
+  display: grid;
+  grid-template-columns: 280px minmax(0, 1fr);
+  gap: 35px;
+  align-items: start;
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.providers-content{
-    width:100%;
+/* =========================================
+   PROVIDERS CONTENT
+========================================= */
+
+.providers-content {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
-.results-header{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-    background:white;
-    padding:18px 25px;
-    border-radius:12px;
-    box-shadow:0 6px 15px rgba(0,0,0,.05);
+/* =========================================
+   RESULTS HEADER
+========================================= */
+
+.results-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  margin-bottom: 25px;
+
+  background: white;
+  padding: 18px 25px;
+
+  border-radius: 12px;
+
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
 }
 
-.results-header h3{
-    color:#0f172a;
+.results-header h3 {
+  color: #0f172a;
+  margin: 0;
 }
 
-.results-header select{
-    padding:12px;
-    border:1px solid #d1d5db;
-    border-radius:8px;
-    outline:none;
+.results-header select {
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  outline: none;
+  background: white;
+  cursor: pointer;
 }
 
-.providers-grid{
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:25px;
+/* =========================================
+   PROVIDER GRID
+========================================= */
+
+.providers-grid {
+  display: grid;
+
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+
+  gap: 25px;
+
+  width: 100%;
+  box-sizing: border-box;
 }
 
-.no-result{
-    grid-column:1/-1;
-    text-align:center;
-    color:#dc2626;
-    padding:40px;
+.no-result {
+  grid-column: 1 / -1;
+
+  text-align: center;
+
+  color: #dc2626;
+
+  padding: 40px;
 }
 
-@media(max-width:992px){
+/* =========================================
+   TABLET / SPLIT SCREEN
+   Filters remain on LEFT
+   Providers remain on RIGHT
+========================================= */
 
-.providers-layout{
-    grid-template-columns:1fr;
+@media (max-width: 1100px) {
+
+  .providers-page {
+    padding: 40px 25px;
+  }
+
+  .providers-layout {
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 20px;
+  }
+
+  /*
+     Keep providers visible on the right.
+     One card per row because available
+     width is smaller.
+  */
+
+  .providers-grid {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .providers-header {
+    margin-bottom: 30px;
+  }
+
+  .providers-header h1 {
+    font-size: 36px;
+  }
+
+  .providers-header p {
+    font-size: 16px;
+  }
+
+  .results-header {
+    padding: 16px 18px;
+  }
 }
 
-.providers-grid{
-    grid-template-columns:1fr;
+/* =========================================
+   NARROW SPLIT SCREEN
+   Still keep filters LEFT
+========================================= */
+
+@media (max-width: 750px) and (min-width: 601px) {
+
+  .providers-page {
+    padding: 30px 15px;
+  }
+
+  .providers-layout {
+    grid-template-columns: 190px minmax(0, 1fr);
+    gap: 15px;
+  }
+
+  .providers-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .providers-header h1 {
+    font-size: 30px;
+  }
+
+  .providers-header p {
+    font-size: 14px;
+  }
+
+  .results-header {
+    padding: 14px;
+  }
+
+  .results-header h3 {
+    font-size: 17px;
+  }
+
+  .results-header select {
+    padding: 10px;
+  }
 }
 
-.results-header{
-    flex-direction:column;
-    gap:15px;
+/* =========================================
+   MOBILE
+   Only actual mobile goes vertical
+========================================= */
+
+@media (max-width: 600px) {
+
+  .providers-page {
+    padding: 25px 15px;
+  }
+
+  .providers-header {
+    text-align: center;
+    margin-bottom: 25px;
+  }
+
+  .providers-header h1 {
+    font-size: 28px;
+  }
+
+  .providers-header p {
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  /*
+     On phones:
+     Filters first
+     Providers below
+  */
+
+  .providers-layout {
+    display: flex;
+    flex-direction: column;
+
+    width: 100%;
+
+    gap: 22px;
+  }
+
+  .providers-layout > * {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .providers-content {
+    width: 100%;
+  }
+
+  /* Results header */
+
+  .results-header {
+    display: flex;
+    flex-direction: column;
+
+    align-items: stretch;
+
+    gap: 12px;
+
+    padding: 18px;
+  }
+
+  .results-header h3 {
+    font-size: 19px;
+  }
+
+  .results-header select {
+    width: 100%;
+  }
+
+  /* Provider cards */
+
+  .providers-grid {
+    grid-template-columns: 1fr;
+
+    width: 100%;
+
+    gap: 18px;
+  }
+
+  .no-result {
+    padding: 30px 15px;
+  }
 }
 
+/* =========================================
+   SMALL PHONES
+========================================= */
+
+@media (max-width: 480px) {
+
+  .providers-page {
+    padding: 20px 10px;
+  }
+
+  .providers-header {
+    margin-bottom: 20px;
+  }
+
+  .providers-header h1 {
+    font-size: 25px;
+  }
+
+  .providers-header p {
+    font-size: 13px;
+  }
+
+  .providers-layout {
+    gap: 18px;
+  }
+
+  .results-header {
+    padding: 15px;
+  }
+
+  .results-header h3 {
+    font-size: 17px;
+  }
+
+  .providers-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
 }
