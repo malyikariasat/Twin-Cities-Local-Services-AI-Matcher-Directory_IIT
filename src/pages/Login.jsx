@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+
+import API from "../services/api";
+
 import "./Auth.css";
 
 function Login() {
@@ -29,15 +31,13 @@ function Login() {
     try {
       setLoading(true);
 
-      const { data } = await axios.post(
-        "http://localhost:5000/api/auth/login",
+      const { data } = await API.post(
+        "/auth/login",
         formData
       );
 
-      // Save JWT
       localStorage.setItem("token", data.token);
 
-      // Save user
       localStorage.setItem(
         "user",
         JSON.stringify(data.user)
@@ -47,7 +47,7 @@ function Login() {
 
       navigate("/");
     } catch (error) {
-      console.error(error);
+      console.error("Login Error:", error);
 
       setError(
         error.response?.data?.message ||
@@ -118,7 +118,9 @@ function Login() {
 
         <p className="auth-switch">
           Don't have an account?{" "}
-          <Link to="/register">Create Account</Link>
+          <Link to="/register">
+            Create Account
+          </Link>
         </p>
 
       </div>

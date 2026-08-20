@@ -1,5 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
+import API from "../services/api";
 import "./ReviewForm.css";
 
 function ReviewForm({ providerId, onReviewAdded }) {
@@ -11,7 +11,7 @@ function ReviewForm({ providerId, onReviewAdded }) {
     e.preventDefault();
 
     try {
-      await axios.post("http://localhost:5000/api/reviews", {
+      await API.post("/reviews", {
         provider: providerId,
         name,
         rating,
@@ -27,20 +27,21 @@ function ReviewForm({ providerId, onReviewAdded }) {
       if (onReviewAdded) {
         onReviewAdded();
       }
-
     } catch (error) {
-      console.error(error);
-      alert("Failed to submit review.");
+      console.error("Review Error:", error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to submit review."
+      );
     }
   };
 
   return (
     <div className="review-form">
-
       <h2>Leave a Review</h2>
 
       <form onSubmit={submitHandler}>
-
         <input
           type="text"
           placeholder="Your Name"
@@ -51,7 +52,9 @@ function ReviewForm({ providerId, onReviewAdded }) {
 
         <select
           value={rating}
-          onChange={(e) => setRating(Number(e.target.value))}
+          onChange={(e) =>
+            setRating(Number(e.target.value))
+          }
         >
           <option value={5}>⭐⭐⭐⭐⭐ (5)</option>
           <option value={4}>⭐⭐⭐⭐ (4)</option>
@@ -71,9 +74,7 @@ function ReviewForm({ providerId, onReviewAdded }) {
         <button type="submit">
           Submit Review
         </button>
-
       </form>
-
     </div>
   );
 }
